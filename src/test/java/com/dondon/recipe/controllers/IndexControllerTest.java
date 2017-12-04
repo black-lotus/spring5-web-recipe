@@ -7,7 +7,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
 
 public class IndexControllerTest {
 
@@ -33,6 +37,8 @@ public class IndexControllerTest {
 
         // then
         assertEquals("index", viewName);
+        verify(recipeService, times(1)).getRecipes();
+        verify(model, times(1)).addAttribute(eq("recipes"), anySet());
     }
 
 }
