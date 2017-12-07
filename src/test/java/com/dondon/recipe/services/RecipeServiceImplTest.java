@@ -1,5 +1,7 @@
 package com.dondon.recipe.services;
 
+import com.dondon.recipe.converters.RecipeCommandToRecipe;
+import com.dondon.recipe.converters.RecipeToRecipeCommand;
 import com.dondon.recipe.domain.Recipe;
 import com.dondon.recipe.repositories.RecipeRepository;
 import org.junit.Before;
@@ -22,10 +24,17 @@ public class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
+    RecipeToRecipeCommand recipeToRecipeCommand;
+
+    @Mock
+    RecipeCommandToRecipe recipeCommandToRecipe;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        recipeService = new RecipeServiceImpl(recipeRepository);
+
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeCommandToRecipe, recipeToRecipeCommand);
     }
 
     @Test
