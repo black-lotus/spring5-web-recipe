@@ -1,11 +1,14 @@
 package com.dondon.recipe.services;
 
 import com.dondon.recipe.commands.IngredientCommand;
+import com.dondon.recipe.converters.IngredientCommandToIngredient;
 import com.dondon.recipe.converters.IngredientToIngredientCommand;
+import com.dondon.recipe.converters.UnitOfMeasureCommandToUnitOfMeasure;
 import com.dondon.recipe.converters.UnitOfMeasureToUnitOfMeasureCommand;
 import com.dondon.recipe.domain.Ingredient;
 import com.dondon.recipe.domain.Recipe;
 import com.dondon.recipe.repositories.RecipeRepository;
+import com.dondon.recipe.repositories.UnitOfMeasureRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -22,22 +25,29 @@ import static org.mockito.Mockito.when;
 public class IngredientServiceImplTest {
 
     private final IngredientToIngredientCommand ingredientToIngredientCommand;
+    private final IngredientCommandToIngredient ingredientCommandToIngredient;
 
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
+    UnitOfMeasureRepository unitOfMeasureRepository;
+
+    @Mock
     IngredientService ingredientService;
+
 
     // init converters
     public IngredientServiceImplTest() {
         this.ingredientToIngredientCommand = new IngredientToIngredientCommand(new UnitOfMeasureToUnitOfMeasureCommand());
+        this.ingredientCommandToIngredient = new IngredientCommandToIngredient(new UnitOfMeasureCommandToUnitOfMeasure());
     }
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        ingredientService = new IngredientServiceImpl(ingredientToIngredientCommand, recipeRepository);
+        ingredientService = new IngredientServiceImpl(ingredientToIngredientCommand, ingredientCommandToIngredient, recipeRepository, unitOfMeasureRepository);
     }
 
     @Test
