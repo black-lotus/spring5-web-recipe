@@ -5,7 +5,6 @@ import com.dondon.recipe.converters.IngredientCommandToIngredient;
 import com.dondon.recipe.converters.IngredientToIngredientCommand;
 import com.dondon.recipe.domain.Ingredient;
 import com.dondon.recipe.domain.Recipe;
-import com.dondon.recipe.repositories.IngredientRepository;
 import com.dondon.recipe.repositories.RecipeRepository;
 import com.dondon.recipe.repositories.UnitOfMeasureRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -24,15 +23,13 @@ public class IngredientServiceImpl implements IngredientService {
 
     private final RecipeRepository recipeRepository;
     private final UnitOfMeasureRepository unitOfMeasureRepository;
-    private final IngredientRepository ingredientRepository;
 
     @Autowired
-    public IngredientServiceImpl(IngredientToIngredientCommand ingredientToIngredientCommand, IngredientCommandToIngredient ingredientCommandToIngredient, RecipeRepository recipeRepository, UnitOfMeasureRepository unitOfMeasureRepository, IngredientRepository ingredientRepository) {
+    public IngredientServiceImpl(IngredientToIngredientCommand ingredientToIngredientCommand, IngredientCommandToIngredient ingredientCommandToIngredient, RecipeRepository recipeRepository, UnitOfMeasureRepository unitOfMeasureRepository) {
         this.ingredientToIngredientCommand = ingredientToIngredientCommand;
         this.ingredientCommandToIngredient = ingredientCommandToIngredient;
         this.recipeRepository = recipeRepository;
         this.unitOfMeasureRepository = unitOfMeasureRepository;
-        this.ingredientRepository = ingredientRepository;
     }
 
     @Override
@@ -114,7 +111,30 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public void deleteById(Long idToDelete) {
-        ingredientRepository.deleteById(idToDelete);
+    public void deleteById(Long recipeId, Long idToDelete) {
+        log.debug("Deleting ingredient: " + recipeId + ":" + idToDelete);
+
+        Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
+
+        if(recipeOptional.isPresent()){
+            Recipe recipe = recipeOptional.get();
+            log.debug("found recipe");
+
+            Optional<Ingredient> ingredientOptional = recipe
+                    .getIngredients()
+                    .stream()
+                    .filter(ingredient -> ingredient.getId().equals(idToDelete))
+                    .findFirst();
+
+            if(ingredientOptional.isPresent()){
+                log.debug("found Ingredient");
+                Ingredient ingredientToDelete = ingredientOptional.get();
+                ingredientToDelete.setRecipe(null);
+                recipe.getIngredients().remove(ingredientOptional.get());
+                recipeRepository.save(recipe);
+            }
+        } else {
+            log.debug("Recipe Id Not found. Id:" + recipeId);
+        }
     }
 }

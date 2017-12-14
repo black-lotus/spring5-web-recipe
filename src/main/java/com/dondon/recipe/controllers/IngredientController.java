@@ -91,7 +91,7 @@ public class IngredientController {
     @GetMapping
     @RequestMapping("recipe/{recipeId}/ingredient/{id}/delete")
     public String deleteById(@PathVariable String recipeId, @PathVariable String id) {
-        ingredientService.deleteById(Long.valueOf(id));
+        ingredientService.deleteById(Long.valueOf(recipeId), Long.valueOf(id));
 
         return "redirect:/recipe/" + recipeId + "/ingredients";
     }
