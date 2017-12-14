@@ -4,8 +4,10 @@ import com.dondon.recipe.commands.RecipeCommand;
 import com.dondon.recipe.converters.RecipeCommandToRecipe;
 import com.dondon.recipe.converters.RecipeToRecipeCommand;
 import com.dondon.recipe.domain.Recipe;
+import com.dondon.recipe.exceptions.NotFoundException;
 import com.dondon.recipe.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +49,8 @@ public class RecipeServiceImpl implements RecipeService {
         Optional<Recipe> recipeOptional = recipeRepository.findById(l);
 
         if (!recipeOptional.isPresent()) {
-            throw new RuntimeException("Recipe Not Found!");
+            // throw new RuntimeException("Recipe Not Found!");
+            throw new NotFoundException("Recipe Not Found!");
         }
 
         return recipeOptional.get();

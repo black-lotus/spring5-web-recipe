@@ -4,6 +4,7 @@ import com.dondon.recipe.commands.RecipeCommand;
 import com.dondon.recipe.converters.RecipeCommandToRecipe;
 import com.dondon.recipe.converters.RecipeToRecipeCommand;
 import com.dondon.recipe.domain.Recipe;
+import com.dondon.recipe.exceptions.NotFoundException;
 import com.dondon.recipe.repositories.RecipeRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,6 +68,17 @@ public class RecipeServiceImplTest {
         assertEquals(recipes.size(), 1);
         verify(recipeRepository, times(1)).findAll();
         verify(recipeRepository, never()).findById(anyLong());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getRecipeByIdTestNotFound() throws Exception {
+        Optional<Recipe> recipeOptional = Optional.empty();
+
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        Recipe recipeReturned = recipeService.findById(4L);
+
+        //should go boom
     }
 
     @Test
