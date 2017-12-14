@@ -7,6 +7,7 @@ import com.dondon.recipe.converters.UnitOfMeasureCommandToUnitOfMeasure;
 import com.dondon.recipe.converters.UnitOfMeasureToUnitOfMeasureCommand;
 import com.dondon.recipe.domain.Ingredient;
 import com.dondon.recipe.domain.Recipe;
+import com.dondon.recipe.repositories.IngredientRepository;
 import com.dondon.recipe.repositories.RecipeRepository;
 import com.dondon.recipe.repositories.UnitOfMeasureRepository;
 import org.junit.Before;
@@ -35,6 +36,9 @@ public class IngredientServiceImplTest {
     UnitOfMeasureRepository unitOfMeasureRepository;
 
     @Mock
+    IngredientRepository ingredientRepository;
+
+    @Mock
     IngredientService ingredientService;
 
 
@@ -48,7 +52,7 @@ public class IngredientServiceImplTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        ingredientService = new IngredientServiceImpl(ingredientToIngredientCommand, ingredientCommandToIngredient, recipeRepository, unitOfMeasureRepository);
+        ingredientService = new IngredientServiceImpl(ingredientToIngredientCommand, ingredientCommandToIngredient, recipeRepository, unitOfMeasureRepository, ingredientRepository);
     }
 
     @Test
@@ -109,6 +113,20 @@ public class IngredientServiceImplTest {
         assertEquals(Long.valueOf(3L), savedCommand.getId());
         verify(recipeRepository, times(1)).findById(anyLong());
         verify(recipeRepository, times(1)).save(any(Recipe.class));
+    }
+
+    @Test
+    public void testDeleteById() throws Exception {
+        // given
+        Long idToDelete = Long.valueOf(2L);
+
+        // when
+        ingredientService.deleteById(idToDelete);
+
+        // no 'when', since method has void return type
+
+        // then
+        verify(ingredientRepository, times(1)).deleteById(anyLong());
     }
 
 }
